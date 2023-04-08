@@ -35,6 +35,7 @@ export default function setupMonaco(monaco: Monaco) {
 
   const keywords = [
     "as",
+    "is",
     "protocol",
     "mixin",
     "const",
