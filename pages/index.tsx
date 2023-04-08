@@ -53,6 +53,8 @@ const Home = ({ examples }: Props) => {
   const [initialCodeLoading, setInitialCodeLoading] =
     React.useState<boolean>(true);
 
+  const [monacoLoaded, setMonacoLoaded] = React.useState<boolean>(false);
+
   const [shareDialogUrl, setShareDialogUrl] = React.useState<string>("");
   const [shareDialogOpen, setShareDialogOpen] = React.useState<boolean>(false);
 
@@ -196,6 +198,7 @@ const Home = ({ examples }: Props) => {
   function handleEditorDidMount(editor: monaco.editor.IStandaloneCodeEditor) {
     editor.setValue(initialValueRef.current);
     editorRef.current = editor;
+    setMonacoLoaded(true);
   }
 
   async function onRun(tests: boolean) {
@@ -340,6 +343,7 @@ const Home = ({ examples }: Props) => {
               autoWidth={true}
               value={selectedExample}
               size="small"
+              disabled={!monacoLoaded}
               onChange={exampleChange}
               label="Examples"
             >
@@ -461,8 +465,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
     throw new Error("Failed to find fallback example");
   }
 
-  // By returning { props: { posts } }, the Blog component
-  // will receive `posts` as a prop at build time
   return {
     props: {
       examples,
