@@ -56,6 +56,25 @@ WORKDIR /app
 
 COPY --from=ghcr.io/alumina-lang/alumina-boot:latest /usr/include/alumina /usr/include/alumina
 COPY --from=ghcr.io/alumina-lang/alumina-boot:latest /usr/bin/alumina-boot /usr/bin/alumina-boot
+
+# Pre-parse standard library for faster execution
+RUN /usr/bin/alumina-boot \
+    --sysroot /usr/include/alumina \
+    --debug \
+    --cfg threading \
+    --cfg use_libbacktrace \
+    -Zast-only \
+    -Zdump-ast=/usr/include/alumina/sysroot.ast
+
+RUN /usr/bin/alumina-boot \
+    --sysroot /usr/include/alumina \
+    --debug \
+    --cfg test \
+    --cfg threading \
+    --cfg use_libbacktrace \
+    -Zast-only \
+    -Zdump-ast=/usr/include/alumina/sysroot-test.ast
+
 COPY --from=deps /build/nsjail/nsjail /usr/bin/nsjail
 COPY --from=deps /build/libbacktrace/.libs/libbacktrace.a /usr/local/lib/libbacktrace.a
 COPY --from=combined /app .
@@ -63,6 +82,7 @@ COPY --from=combined /app .
 RUN ranlib /usr/local/lib/libbacktrace.a
 
 ENV NODE_ENV production
+ENV CACHE_AST 1
 
 EXPOSE 3000
 CMD ["./scripts/start.sh"]

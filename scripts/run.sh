@@ -8,6 +8,19 @@ if [[ -v CREATE_CGROUP ]]; then
     sudo chown $(id -u):$(id -g) /sys/fs/cgroup/pids/NSJAIL
 fi
 
+if [[ -v CACHE_AST ]]; then
+    if [[ -v TEST ]]; then
+        alumina_extra_args="--ast $ALUMINA_SYSROOT/sysroot-test.ast"
+    else
+        alumina_extra_args="--ast $ALUMINA_SYSROOT/sysroot.ast"
+    fi
+    unset ALUMINA_SYSROOT
+    jail_extra_args=""
+else
+    alumina_extra_args=""
+    jail_extra_args="-E ALUMINA_SYSROOT"
+fi
+
 # Jail the compiler invocation too just to make abuse harder. Since it's
 # harder to hack the box at compile time, the jail is more forgiving,
 # but one could try `include_bytes!("/proc/<node process>/environ")` and
@@ -22,21 +35,22 @@ minimum_security_prison() {
         --chroot / -B $PWD --cwd $PWD \
         --hostname alumina \
         --disable_rlimits \
-        -E PATH -E HOME -E ALUMINA_SYSROOT \
+        -E PATH -E HOME $jail_extra_args \
         -E CLICOLOR_FORCE=1 -E RUST_BACKTRACE=full \
         --really_quiet -- $cmd $@
 }
 
 touch compiler.output
+
 if [[ -v TEST ]]; then
     minimum_security_prison $ALUMINA_BOOT \
-        --debug --cfg threading --cfg use_libbacktrace --cfg test \
+        $alumina_extra_args --debug --cfg threading --cfg use_libbacktrace --cfg test \
         playground=program.alu \
         -o program.c &>> compiler.output
     extra_env="-E CLICOLOR_FORCE=1"
 else
     minimum_security_prison $ALUMINA_BOOT \
-        --debug --cfg threading --cfg use_libbacktrace \
+        $alumina_extra_args --debug --cfg threading --cfg use_libbacktrace \
         playground=program.alu \
         -o program.c &>> compiler.output
     extra_env=""
