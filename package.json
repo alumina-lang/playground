@@ -8,19 +8,19 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.163.0",
-    "@emotion/cache": "^11.10.3",
-    "@emotion/css": "^11.10.0",
-    "@emotion/react": "^11.10.4",
-    "@emotion/server": "^11.10.0",
-    "@emotion/styled": "^11.10.4",
-    "@monaco-editor/react": "^4.4.5",
-    "@mui/icons-material": "^5.10.3",
-    "@mui/material": "^5.10.3",
+    "@aws-sdk/client-s3": "^3.438.0",
+    "@emotion/cache": "^11.11.0",
+    "@emotion/css": "^11.11.2",
+    "@emotion/react": "^11.11.1",
+    "@emotion/server": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@monaco-editor/react": "^4.6.0",
+    "@mui/icons-material": "^5.14.15",
+    "@mui/material": "^5.14.15",
     "adm-zip": "^0.5.9",
     "ansi-to-html": "^0.7.2",
-    "monaco-editor": "^0.37.1",
-    "next": "13.3.0",
+    "monaco-editor": "^0.44.0",
+    "next": "14.0.0",
     "next-pwa": "^5.6.0",
     "notistack": "^3.0.1",
     "react": "18.2.0",
@@ -29,13 +29,13 @@
     "use-font-face-observer": "^1.2.1"
   },
   "devDependencies": {
-    "@types/adm-zip": "^0.5.0",
-    "@types/node": "18.15.11",
-    "@types/react": "18.0.33",
-    "@types/temp": "^0.9.1",
-    "@types/tmp": "^0.2.3",
-    "eslint": "8.38.0",
-    "eslint-config-next": "13.3.0",
-    "typescript": "5.0.4"
+    "@types/adm-zip": "^0.5.3",
+    "@types/node": "20.8.9",
+    "@types/react": "18.2.33",
+    "@types/temp": "^0.9.3",
+    "@types/tmp": "^0.2.5",
+    "eslint": "8.52.0",
+    "eslint-config-next": "14.0.0",
+    "typescript": "5.2.2"
   }
 }
