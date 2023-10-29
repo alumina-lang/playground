@@ -7,7 +7,7 @@ COPY . .
 RUN EXAMPLES_REV=${EXAMPLES_REV} yarn build
 
 FROM ubuntu:22.04 as deps
-RUN apt update && apt install -y \
+RUN apt-get update && apt-get install -y \
     autoconf \
     bison \
     flex \
@@ -41,9 +41,12 @@ COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
 FROM ubuntu:22.04
-RUN apt update && \
-    apt install -y curl && \
-    (curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -) && \
+RUN apt-get update && \
+    apt-get install -y ca-certificates curl gnupg && \
+    mkdir -p /etc/apt/keyrings && \
+    (curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg) && \
+    (echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list) && \
+    apt-get update && \
     apt-get install -y nodejs \
     gcc \
     libnl-3-200 \
