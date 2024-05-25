@@ -6,7 +6,7 @@ RUN yarn install --frozen-lockfile
 COPY . .
 RUN EXAMPLES_REV=${EXAMPLES_REV} yarn build
 
-FROM ubuntu:22.04 as deps
+FROM ubuntu:24.04 as deps
 RUN apt-get update && apt-get install -y \
     autoconf \
     bison \
@@ -29,7 +29,7 @@ WORKDIR /build/libbacktrace
 RUN git clone https://github.com/ianlancetaylor/libbacktrace.git .
 RUN ./configure && make -j8
 
-FROM ubuntu:22.04 as combined
+FROM ubuntu:24.04 as combined
 
 WORKDIR /app
 
@@ -40,7 +40,7 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 RUN apt-get update && \
     apt-get install -y ca-certificates curl gnupg && \
     mkdir -p /etc/apt/keyrings && \
@@ -51,7 +51,7 @@ RUN apt-get update && \
     gcc \
     libnl-3-200 \
     libnl-route-3-200 \
-    libprotobuf23 \
+    libprotobuf32t64 \
     gosu \
     && rm -rf /var/lib/apt/lists/*
 
