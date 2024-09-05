@@ -97,6 +97,7 @@ export default function setupMonaco(monaco: Monaco) {
       "loop",
       "switch",
       "return",
+      "yield",
       "while",
     ],
 
