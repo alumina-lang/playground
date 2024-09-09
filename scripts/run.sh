@@ -44,20 +44,20 @@ touch compiler.output
 
 if [[ -v TEST ]]; then
     minimum_security_prison $ALUMINA_BOOT \
-        $alumina_extra_args --debug --cfg threading --cfg use_libbacktrace --cfg test \
+        $alumina_extra_args --debug --cfg threading --cfg use_libbacktrace --cfg coroutines --cfg test \
         playground=program.alu \
         -o program.c &>> compiler.output
     extra_env="-E CLICOLOR_FORCE=1"
 else
     minimum_security_prison $ALUMINA_BOOT \
-        $alumina_extra_args --debug --cfg threading --cfg use_libbacktrace \
+        $alumina_extra_args --debug --cfg threading --cfg use_libbacktrace --cfg coroutines \
         playground=program.alu \
         -o program.c &>> compiler.output
     extra_env=""
 fi
 
 minimum_security_prison gcc -w -fdiagnostics-color=always \
-    -O0 -g3 -fPIE -rdynamic -o program.out program.c -lm -lpthread -lbacktrace \
+    -O0 -g3 -fPIE -rdynamic -o program.out program.c -lm -lpthread -lbacktrace -lminicoro \
     &>> compiler.output
 
 echo 0 > program.ret
