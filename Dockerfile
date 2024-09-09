@@ -20,7 +20,8 @@ RUN apt-get update && apt-get install -y \
     make \
     pkg-config \
     protobuf-compiler \
-    gosu
+    gosu \
+    curl
 
 WORKDIR /build/nsjail
 RUN git clone https://github.com/google/nsjail.git .
@@ -28,6 +29,10 @@ RUN make -j8
 WORKDIR /build/libbacktrace
 RUN git clone https://github.com/ianlancetaylor/libbacktrace.git .
 RUN ./configure && make -j8
+WORKDIR /build/minicoro
+RUN curl -Ss -o minicoro.h https://raw.githubusercontent.com/edubart/minicoro/main/minicoro.h
+RUN gcc -O0 -g3 -fPIE -rdynamic -DMINICORO_IMPL -xc -c -o minicoro.o minicoro.h && \
+    ar rcs libminicoro.a minicoro.o
 
 FROM ubuntu:24.04 as combined
 
@@ -66,6 +71,7 @@ RUN /usr/bin/alumina-boot \
     --debug \
     --cfg threading \
     --cfg use_libbacktrace \
+    --cfg coroutines \
     -Zast-only \
     -Zdump-ast=/usr/include/alumina/sysroot.ast
 
@@ -75,14 +81,17 @@ RUN /usr/bin/alumina-boot \
     --cfg test \
     --cfg threading \
     --cfg use_libbacktrace \
+    --cfg coroutines \
     -Zast-only \
     -Zdump-ast=/usr/include/alumina/sysroot-test.ast
 
 COPY --from=deps /build/nsjail/nsjail /usr/bin/nsjail
 COPY --from=deps /build/libbacktrace/.libs/libbacktrace.a /usr/local/lib/libbacktrace.a
+COPY --from=deps /build/minicoro/libminicoro.a /usr/local/lib/libminicoro.a
 COPY --from=combined /app .
 
-RUN ranlib /usr/local/lib/libbacktrace.a
+RUN ranlib /usr/local/lib/libbacktrace.a && \
+    ranlib /usr/local/lib/libminicoro.a
 
 ENV NODE_ENV production
 ENV CACHE_AST 1
