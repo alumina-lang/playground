@@ -30,8 +30,8 @@ WORKDIR /build/libbacktrace
 RUN git clone https://github.com/ianlancetaylor/libbacktrace.git .
 RUN ./configure && make -j8
 WORKDIR /build/minicoro
-RUN curl -Ss -o minicoro.h https://raw.githubusercontent.com/edubart/minicoro/main/minicoro.h
-RUN gcc -O0 -g3 -fPIE -rdynamic -DMINICORO_IMPL -xc -c -o minicoro.o minicoro.h && \
+RUN curl -Ss -o minicoro.c https://raw.githubusercontent.com/edubart/minicoro/main/minicoro.h
+RUN gcc -O0 -g3 -fPIE -rdynamic -DMINICORO_IMPL -DNDEBUG -c -o minicoro.o minicoro.c && \
     ar rcs libminicoro.a minicoro.o
 
 FROM ubuntu:24.04 as combined
@@ -70,7 +70,7 @@ RUN /usr/bin/alumina-boot \
     --sysroot /usr/include/alumina \
     --debug \
     --cfg threading \
-    --cfg use_libbacktrace \
+    --cfg libbacktrace \
     --cfg coroutines \
     -Zast-only \
     -Zdump-ast=/usr/include/alumina/sysroot.ast
@@ -80,7 +80,7 @@ RUN /usr/bin/alumina-boot \
     --debug \
     --cfg test \
     --cfg threading \
-    --cfg use_libbacktrace \
+    --cfg libbacktrace \
     --cfg coroutines \
     -Zast-only \
     -Zdump-ast=/usr/include/alumina/sysroot-test.ast
