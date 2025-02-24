@@ -58,8 +58,8 @@ const Home = ({ examples }: Props) => {
   const [shareDialogUrl, setShareDialogUrl] = React.useState<string>("");
   const [shareDialogOpen, setShareDialogOpen] = React.useState<boolean>(false);
 
-  const editorContainerRef = React.useRef<HTMLDivElement>();
-  const outputContainerRef = React.useRef<HTMLDivElement>();
+  const editorContainerRef = React.useRef<HTMLDivElement>(null);
+  const outputContainerRef = React.useRef<HTMLDivElement>(null);
 
   const initialValueRef = React.useRef<string>("");
   const invalidateCodeState = (value?: string) => {
@@ -239,7 +239,7 @@ const Home = ({ examples }: Props) => {
     return () => {
       window.removeEventListener("keydown", handler);
     };
-  }, [initialCodeLoading, compiling, onRun]);
+  }, [initialCodeLoading, compiling]);
 
   React.useEffect(() => {
     if (!editorRef.current) {
