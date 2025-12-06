@@ -73,7 +73,7 @@ const Home = ({ examples }: Props) => {
     }
 
     if (router.query.code || router.query.q) {
-      router.replace("/", undefined, { shallow: true });
+      router.replace("/");
     }
   };
 
@@ -93,7 +93,7 @@ const Home = ({ examples }: Props) => {
 
   React.useEffect(() => {
     if (isFontLoaded) {
-      // @ts-ignore
+      // @ts-expect-error remeasureFonts is a private API in Monaco editor
       editorRef.current?.remeasureFonts?.();
     }
   }, [isFontLoaded]);
@@ -154,7 +154,7 @@ const Home = ({ examples }: Props) => {
     } else if (router.query.q) {
       loadInlineCode(router.query.q as string);
       setInitialCodeLoading(false);
-      router.replace("/", undefined, { shallow: true });
+      router.replace("/");
     } else if (initialCodeLoading) {
       loadFallbackCode();
       setInitialCodeLoading(false);
@@ -269,9 +269,7 @@ const Home = ({ examples }: Props) => {
         throw new Error("Failed to fetch");
       }
       let data = await res.json();
-      router.replace({ pathname: "/", query: { code: data.id } }, undefined, {
-        shallow: true,
-      });
+      router.replace({ pathname: "/", query: { code: data.id } });
 
       setShareDialogUrl(`${window.location.origin}/?code=${data.id}`);
       setShareDialogOpen(true);
@@ -378,7 +376,7 @@ const Home = ({ examples }: Props) => {
           </Button>
         </Box>
         <Grid container justifyContent="space-between" spacing={2}>
-          <Grid item md={hasOutput ? 7 : 12} xs={12}>
+          <Grid size={{ md: hasOutput ? 7 : 12, xs: 12 }}>
             <Box
               border="1px solid #d3d3d3"
               flexDirection="column"
@@ -409,7 +407,7 @@ const Home = ({ examples }: Props) => {
             </Box>
           </Grid>
           {hasOutput && (
-            <Grid item md={5} xs={12}>
+            <Grid size={{ md: 5, xs: 12 }}>
               <Box ref={outputContainerRef} sx={{ overflowY: "auto" }}>
                 {compiling && (
                   <Box my={2} display="flex" justifyContent="center">

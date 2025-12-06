@@ -3,7 +3,6 @@ import { exec } from "node:child_process";
 import tmp from "tmp";
 import fs from "node:fs";
 import path from "node:path";
-import getConfig from "next/config";
 import { promisify } from "node:util";
 
 const writeFile = promisify(fs.writeFile);
@@ -25,8 +24,6 @@ function tempDir(): Promise<TempDir> {
     })
   );
 }
-
-const { serverRuntimeConfig } = getConfig();
 
 export type Data = {
   success: boolean;
@@ -54,7 +51,7 @@ async function run(code: string, test: boolean): Promise<Data> {
 
     try {
       await promisify(exec)(
-        path.join(serverRuntimeConfig.PROJECT_ROOT, "./scripts/run.sh"),
+        path.join(process.cwd(), "./scripts/run.sh"),
         {
           env,
           cwd: directory,

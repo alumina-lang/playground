@@ -6,7 +6,7 @@ RUN yarn install --frozen-lockfile
 COPY . .
 RUN EXAMPLES_REV=${EXAMPLES_REV} yarn build
 
-FROM ubuntu:24.04 as deps
+FROM ubuntu:24.04 AS deps
 RUN apt-get update && apt-get install -y \
     autoconf \
     bison \
@@ -34,11 +34,11 @@ RUN curl -Ss -o minicoro.c https://raw.githubusercontent.com/edubart/minicoro/ma
 RUN gcc -O0 -g3 -fPIE -rdynamic -DMINICORO_IMPL -DNDEBUG -c -o minicoro.o minicoro.c && \
     ar rcs libminicoro.a minicoro.o
 
-FROM ubuntu:24.04 as combined
+FROM ubuntu:24.04 AS combined
 
 WORKDIR /app
 
-COPY --from=builder /app/next.config.js ./
+COPY --from=builder /app/next.config.mjs ./
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/.next/standalone ./
@@ -93,8 +93,8 @@ COPY --from=combined /app .
 RUN ranlib /usr/local/lib/libbacktrace.a && \
     ranlib /usr/local/lib/libminicoro.a
 
-ENV NODE_ENV production
-ENV CACHE_AST 1
+ENV NODE_ENV=production
+ENV CACHE_AST=1
 
 EXPOSE 3000
 CMD ["./scripts/start.sh"]
